@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OKR Dashboard 2026 - PT Cerebrum Edukanesia Nusantara</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0f1117;--card:#1a1d27;--card2:#22253a;--border:#2a2d3e;
+    --text:#e4e4e7;--muted:#9ca3af;
+    --blue:#3b82f6;--green:#22c55e;--yellow:#eab308;--red:#ef4444;
+    --purple:#a855f7;--cyan:#06b6d4;--orange:#f97316;
+  }
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px}
+
+  .hdr{text-align:center;margin-bottom:28px;padding:28px;background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(139,92,246,.08));border-radius:18px;border:1px solid var(--border)}
+  .hdr .co{font-size:14px;font-weight:500;margin-bottom:2px;color:var(--muted)}
+  .hdr h1{font-size:26px;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+  .hdr .sub{color:var(--muted);font-size:13px}
+  .hdr .sub .live-dot{display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:4px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .vision{margin-top:12px;padding:10px 16px;background:rgba(59,130,246,.06);border-radius:8px;border-left:3px solid var(--blue);font-size:11px;color:var(--muted);text-align:left}
+  .vision b{color:var(--blue)}
+
+  /* UPDATE BUTTON */
+  .update-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px}
+  .btn-update{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+  .btn-update:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(59,130,246,.3)}
+  .btn-update:disabled{opacity:.5;cursor:wait;transform:none}
+  .btn-update .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin-right:6px;vertical-align:middle}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #updateStatus{font-size:11px;color:var(--muted)}
+
+  .live-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+  .live-card{background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(59,130,246,.08));border:1px solid rgba(6,182,212,.15);border-radius:12px;padding:16px;text-align:center;position:relative}
+  .live-card .badge{position:absolute;top:6px;right:6px;font-size:8px;background:rgba(6,182,212,.2);color:var(--cyan);padding:2px 5px;border-radius:3px;font-weight:700;letter-spacing:.5px}
+  .live-card .val{font-size:22px;font-weight:800;color:var(--cyan)}
+  .live-card .lbl{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+  .st{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+  .st .sv{font-size:28px;font-weight:800;margin-bottom:2px}
+  .st .sl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+
+  .donuts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+  .dc{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:20px;text-align:center;position:relative;overflow:hidden}
+  .dc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+  .dc:nth-child(1)::before{background:linear-gradient(90deg,var(--blue),var(--purple))}
+  .dc:nth-child(2)::before{background:linear-gradient(90deg,var(--green),var(--cyan))}
+  .dc:nth-child(3)::before{background:linear-gradient(90deg,var(--orange),var(--red))}
+  .dc .dtitle{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600;margin-bottom:10px}
+  .donut{position:relative;width:110px;height:110px;margin:0 auto 10px}
+  .donut svg{transform:rotate(-90deg)}
+  .donut .pct{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:800}
+  .dc .otitle{font-size:12px;font-weight:500;line-height:1.4}
+
+  .obj{background:var(--card);border-radius:14px;border:1px solid var(--border);margin-bottom:20px;overflow:hidden}
+  .obj-hdr{padding:18px 20px;display:flex;align-items:center;justify-content:space-between}
+  .obj-left{display:flex;align-items:center;gap:12px}
+  .obj-badge{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0}
+  .obj-badge.b1{background:rgba(59,130,246,.12);color:var(--blue)}
+  .obj-badge.b2{background:rgba(34,197,94,.12);color:var(--green)}
+  .obj-badge.b3{background:rgba(245,158,11,.12);color:var(--yellow)}
+  .obj-info h3{font-size:14px;font-weight:600;margin-bottom:2px}
+  .obj-info .meta{font-size:11px;color:var(--muted)}
+  .obj-pct{font-size:18px;font-weight:800;padding:6px 14px;border-radius:8px;background:rgba(255,255,255,.04)}
+
+  .kr-list{padding:0 20px 16px}
+  .kr{padding:12px 14px;background:rgba(255,255,255,.015);border-radius:8px;margin-bottom:8px;border:1px solid rgba(255,255,255,.03)}
+  .kr-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+  .kr-num{font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;margin-right:8px;flex-shrink:0}
+  .kr-num.n1{background:rgba(59,130,246,.12);color:var(--blue)}
+  .kr-num.n2{background:rgba(34,197,94,.12);color:var(--green)}
+  .kr-num.n3{background:rgba(245,158,11,.12);color:var(--yellow)}
+  .kr-desc{font-size:12px;flex:1;line-height:1.4}
+  .kr-pct{font-size:13px;font-weight:700;margin-left:10px;flex-shrink:0}
+  .kr-bar{height:5px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;margin-bottom:5px}
+  .kr-fill{height:100%;border-radius:3px;transition:width 1.5s cubic-bezier(.4,0,.2,1)}
+  .kr-meta{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--muted)}
+  .kr-div{padding:1px 6px;background:rgba(255,255,255,.05);border-radius:3px;font-size:9px;font-weight:500}
+  .src{font-size:8px;padding:1px 5px;border-radius:3px;font-weight:700;margin-left:4px;letter-spacing:.3px}
+  .src-playstore{background:rgba(34,197,94,.15);color:var(--green)}
+  .src-markaz{background:rgba(6,182,212,.15);color:var(--cyan)}
+  .src-sheets{background:rgba(234,179,8,.15);color:var(--yellow)}
+  .src-manual{background:rgba(168,85,247,.15);color:var(--purple)}
+
+  .c-green{color:var(--green)}.c-yellow{color:var(--yellow)}.c-red{color:var(--red)}.c-blue{color:var(--blue)}.c-cyan{color:var(--cyan)}
+  .f-green{background:linear-gradient(90deg,var(--green),var(--cyan))}
+  .f-yellow{background:linear-gradient(90deg,var(--yellow),var(--orange))}
+  .f-red{background:linear-gradient(90deg,var(--red),var(--orange))}
+
+  .note{margin-bottom:20px;padding:14px 16px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:10px;font-size:12px;line-height:1.5}
+  .note b{color:var(--blue)}
+  .err-note{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.15)}
+  .err-note b{color:var(--red)}
+
+  .ps-section{background:var(--card);border-radius:14px;border:1px solid var(--border);margin-bottom:20px;overflow:hidden;padding:20px}
+  .ps-title{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .ps-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  .ps-app{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);border-radius:8px;padding:10px;text-align:center}
+  .ps-app .name{font-size:10px;font-weight:600;margin-bottom:4px;color:var(--text);line-height:1.3;min-height:26px;display:flex;align-items:center;justify-content:center}
+  .ps-app .rating{font-size:16px;font-weight:800;margin-bottom:2px}
+  .ps-app .stars{font-size:9px;color:var(--yellow);margin-bottom:3px}
+  .ps-app .dl{font-size:9px;color:var(--muted)}
+  .ps-app .reviews{font-size:8px;color:var(--muted);margin-top:1px}
+  .ps-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+  .ps-stat{text-align:center;padding:12px;background:rgba(34,197,94,.05);border-radius:8px;border:1px solid rgba(34,197,94,.1)}
+  .ps-stat .v{font-size:20px;font-weight:800;color:var(--green)}
+  .ps-stat .l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-top:2px}
+
+  .footer{text-align:center;padding:16px;color:var(--muted);font-size:10px}
+  @media(max-width:900px){.ps-grid{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:768px){.live-row,.donuts{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.ps-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="co">PT Cerebrum Edukanesia Nusantara</div>
+  <h1>OKR Dashboard 2026</h1>
+  <div class="sub"><span class="live-dot"></span> Data dari Google Sheet &bull; <span id="snapshotDate">Loading...</span></div>
+  <div class="vision"><b>Vision 2029:</b> Membantu setiap orang lolos meraih impiannya dan melahirkan generasi pemimpin berintegritas yang membawa dampak nyata bagi kemajuan bangsa melalui teknologi pendidikan</div>
+</div>
+
+<!-- UPDATE BUTTON -->
+<div class="update-row">
+  <button class="btn-update" id="btnUpdate" onclick="fetchSheetData()">&#x21bb; Update Data dari Google Sheet</button>
+  <span id="updateStatus"></span>
+</div>
+
+<!-- LIVE DATA CARDS -->
+<div class="live-row">
+  <div class="live-card"><div class="badge">MARKAZ</div><div class="val" id="lv_user">-</div><div class="lbl">Total User</div></div>
+  <div class="live-card"><div class="badge">MARKAZ</div><div class="val" id="lv_prem">-</div><div class="lbl">User Premium</div></div>
+  <div class="live-card"><div class="badge">MARKAZ</div><div class="val" id="lv_trans">-</div><div class="lbl">Total Transaksi</div></div>
+  <div class="live-card"><div class="badge">MARKAZ</div><div class="val" id="lv_sales">-</div><div class="lbl">Total Sales YTD</div></div>
+</div>
+
+<div class="note" id="dataNote"><b>Sumber Data:</b> Google Sheet OKR 2026 (tab DashboardData). Klik tombol "Update Data" untuk menarik data terbaru. Edit angka di <a href="https://docs.google.com/spreadsheets/d/1GbFP9fB-UIc832Vz8P9ZItSlqgvJmYYM-d8tOvRcoEU/edit#gid=1268343166" target="_blank" style="color:var(--cyan)">Google Sheet</a> lalu klik Update.</div>
+
+<div class="stats">
+  <div class="st"><div class="sv c-blue" id="ovPct">-</div><div class="sl">Overall OKR</div></div>
+  <div class="st"><div class="sv c-green" id="krGreen">-</div><div class="sl">KR &ge; 80%</div></div>
+  <div class="st"><div class="sv c-yellow" id="krYellow">-</div><div class="sl">KR 30-79%</div></div>
+  <div class="st"><div class="sv c-red" id="krRed">-</div><div class="sl">KR &lt; 30%</div></div>
+</div>
+
+<div class="donuts" id="donutCards"></div>
+
+<!-- PLAY STORE -->
+<div class="ps-section">
+  <div class="ps-title">&#9658; Google Play Store &mdash; Per-App Data</div>
+  <div class="ps-grid" id="psGrid"></div>
+  <div class="ps-summary">
+    <div class="ps-stat"><div class="v" id="psDl">-</div><div class="l">Total Downloads</div></div>
+    <div class="ps-stat"><div class="v" id="psRating">-</div><div class="l">Avg Rating (Weighted)</div></div>
+    <div class="ps-stat"><div class="v" id="psReviews">-</div><div class="l">Total Reviews</div></div>
+  </div>
+</div>
+
+<div id="objDetails"></div>
+
+<div class="footer">OKR Dashboard 2026 &bull; PT Cerebrum Edukanesia Nusantara &bull; Data: Google Sheet + Markaz + Play Store</div>
+
+<script>
+// ============ CONFIG ============
+const SHEET_ID = '1GbFP9fB-UIc832Vz8P9ZItSlqgvJmYYM-d8tOvRcoEU';
+const SHEET_GID = '1268343166'; // DashboardData tab gid
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`;
+
+// ============ DEFAULT DATA (fallback) ============
+let D = {
+  snapshot_date: '2026-04-08',
+  total_user: 39483,
+  total_premium: 6437,
+  total_transaksi: 6348,
+  total_sales: 2000000000,
+  total_downloads: 1510500,
+  avg_rating: 4.58,
+  total_reviews: 76603,
+  kr_1_1: 0, kr_1_5: 2400,
+  kr_2_4: 21.74, kr_2_5: 1, kr_2_6: 0, kr_2_7: 0,
+  kr_3_1: 0, kr_3_2: 3, kr_3_3: 13, kr_3_4: 1, kr_3_5: 0
+};
+
+// ============ PLAY STORE (static, update via sheet for totals) ============
+const playStoreApps = [
+  { name:'JadiASN', rating:4.5, reviews:9120, downloads:'500rb+', dlNum:500000 },
+  { name:'Cerebrum', rating:4.6, reviews:60300, downloads:'500rb+', dlNum:500000 },
+  { name:'JadiPOLISI', rating:4.7, reviews:825, downloads:'100rb+', dlNum:100000 },
+  { name:'JadiBUMN', rating:4.7, reviews:3640, downloads:'100rb+', dlNum:100000 },
+  { name:'JadiPrajurit', rating:4.4, reviews:328, downloads:'100rb+', dlNum:100000 },
+  { name:'JadiPPPK', rating:4.3, reviews:1520, downloads:'100rb+', dlNum:100000 },
+  { name:'JadiSekdin', rating:4.5, reviews:412, downloads:'50rb+', dlNum:50000 },
+  { name:'JadiPCPM', rating:4.3, reviews:162, downloads:'10rb+', dlNum:10000 },
+  { name:'JadiPPG', rating:4.1, reviews:56, downloads:'10rb+', dlNum:10000 },
+  { name:'JadiNakes', rating:3.8, reviews:44, downloads:'10rb+', dlNum:10000 },
+  { name:'JadiOJK', rating:4.2, reviews:109, downloads:'10rb+', dlNum:10000 },
+  { name:'PsikotesKerja', rating:3.4, reviews:35, downloads:'10rb+', dlNum:10000 },
+  { name:'TOEFL Academy', rating:4.6, reviews:42, downloads:'5rb+', dlNum:5000 },
+  { name:'JadiBeasiswa', rating:3.3, reviews:10, downloads:'5rb+', dlNum:5000 },
+  { name:'JagoTPA', rating:null, reviews:0, downloads:'500+', dlNum:500 }
+];
+
+// ============ FETCH FROM GOOGLE SHEET ============
+async function fetchSheetData() {
+  const btn = document.getElementById('btnUpdate');
+  const status = document.getElementById('updateStatus');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Mengambil data...';
+  status.textContent = '';
+
+  try {
+    const res = await fetch(CSV_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    const rows = parseCSV(text);
+
+    // Parse key-value pairs (skip header row)
+    let count = 0;
+    for (let i = 1; i < rows.length; i++) {
+      const key = (rows[i][0] || '').trim();
+      const val = (rows[i][1] || '').trim();
+      if (key && val !== '' && D.hasOwnProperty(key)) {
+        D[key] = isNaN(Number(val)) ? val : Number(val);
+        count++;
+      }
+    }
+
+    status.textContent = 'Berhasil! ' + count + ' data diperbarui. ' + new Date().toLocaleString('id-ID');
+    status.style.color = 'var(--green)';
+    document.getElementById('dataNote').innerHTML =
+      '<b>Data Updated!</b> ' + count + ' key dari Google Sheet berhasil dimuat (' + new Date().toLocaleString('id-ID') + '). <a href="https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/edit#gid=' + SHEET_GID + '" target="_blank" style="color:var(--cyan)">Edit Sheet</a>';
+  } catch (e) {
+    status.textContent = 'Gagal: ' + e.message + '. Pastikan Google Sheet sudah di-publish ke web.';
+    status.style.color = 'var(--red)';
+    document.getElementById('dataNote').innerHTML =
+      '<b>Fetch gagal:</b> ' + e.message + '. Pastikan Sheet sudah di-Publish ke web (File > Bagikan > Publikasikan ke web). Menggunakan data default. <a href="https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/edit#gid=' + SHEET_GID + '" target="_blank" style="color:var(--cyan)">Buka Sheet</a>';
+    document.getElementById('dataNote').classList.add('err-note');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '&#x21bb; Update Data dari Google Sheet';
+  renderAll();
+}
+
+function parseCSV(text) {
+  const rows = [];
+  let current = [];
+  let cell = '';
+  let inQuote = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuote) {
+      if (c === '"' && text[i+1] === '"') { cell += '"'; i++; }
+      else if (c === '"') inQuote = false;
+      else cell += c;
+    } else {
+      if (c === '"') inQuote = true;
+      else if (c === ',') { current.push(cell); cell = ''; }
+      else if (c === '\n' || (c === '\r' && text[i+1] === '\n')) {
+        current.push(cell); cell = ''; rows.push(current); current = [];
+        if (c === '\r') i++;
+      } else cell += c;
+    }
+  }
+  if (cell || current.length) { current.push(cell); rows.push(current); }
+  return rows;
+}
+
+// ============ HELPERS ============
+function formatRp(n) {
+  if (n >= 1e12) return (n/1e12).toFixed(1) + ' T';
+  if (n >= 1e9) return (n/1e9).toFixed(1) + ' M';
+  if (n >= 1e6) return (n/1e6).toFixed(0) + ' jt';
+  if (n >= 1e3) return (n/1e3).toFixed(0) + ' rb';
+  return n.toString();
+}
+
+function calcProgress(kr) {
+  if (kr.cur === null || kr.cur === undefined) return 0;
+  if (kr.inv) {
+    if (kr.cur <= kr.tgt) return 100;
+    return Math.max(0, Math.round((1 - (kr.cur - kr.tgt) / kr.tgt) * 100));
+  }
+  if (kr.tgt === 0) return 0;
+  return Math.min(100, Math.round((kr.cur / kr.tgt) * 100));
+}
+
+function colorCls(p) { return p >= 80 ? 'green' : p >= 30 ? 'yellow' : 'red'; }
+function srcBadge(s) {
+  const m = { playstore:'PLAY STORE', markaz:'MARKAZ', sheets:'INTERNAL', manual:'MANUAL' };
+  return '<span class="src src-' + s + '">' + (m[s]||s) + '</span>';
+}
+function formatVal(kr) {
+  if (kr.cur === null || kr.cur === undefined) return 'N/A';
+  if (kr.u === 'Rp') return 'Rp ' + formatRp(kr.cur);
+  if (kr.u === 'user' || kr.u === 'downloads') return Number(kr.cur).toLocaleString('id-ID');
+  if (kr.u === 'rating') return Number(kr.cur).toFixed(2);
+  if (kr.u === '%') return Number(kr.cur).toFixed(1) + '%';
+  return Number(kr.cur).toLocaleString('id-ID');
+}
+function formatTarget(kr) {
+  if (kr.u === 'Rp') return 'Rp ' + formatRp(kr.tgt);
+  if (kr.u === 'user' || kr.u === 'downloads') return kr.tgt.toLocaleString('id-ID');
+  if (kr.u === 'rating') return kr.tgt.toFixed(1);
+  if (kr.u === '%') return kr.tgt + '%';
+  if (kr.u === 'bug') return '< ' + kr.tgt.toLocaleString('id-ID');
+  return kr.tgt.toLocaleString('id-ID');
+}
+function starsHtml(r) {
+  if (!r) return '<span style="color:var(--muted)">-</span>';
+  let s = '';
+  for (let i = 0; i < Math.floor(r); i++) s += '\u2605';
+  if (r % 1 >= 0.3) s += '\u2606';
+  return s;
+}
+
+// ============ BUILD OKR DATA ============
+function buildOkrData() {
+  const conv = Math.round(D.total_premium / D.total_user * 10000) / 100;
+  return [
+    {
+      id:1, title:'Meloloskan 90% siswa yang mengikuti 80% pembelajaran',
+      target:'90%', cls:'b1', ncls:'n1',
+      krs: [
+        { n:'1.1', d:'Content error rate maksimal 10%', tgt:10, cur:D.kr_1_1||null, u:'%', inv:true, div:'Produk', src:'manual' },
+        { n:'1.2', d:'Total registered user 800.000', tgt:800000, cur:D.total_user, u:'user', inv:false, div:'Produk', src:'markaz' },
+        { n:'1.3', d:'Rating All Feature 4,8/5', tgt:4.8, cur:D.avg_rating, u:'rating', inv:false, div:'Produk', src:'playstore' },
+        { n:'1.4', d:'Performance platform 100%', tgt:100, cur:null, u:'%', inv:false, div:'IT', src:'manual' },
+        { n:'1.5', d:'Bug platform < 1.920/tahun', tgt:1920, cur:D.kr_1_5, u:'bug', inv:true, div:'IT', src:'sheets' }
+      ]
+    },
+    {
+      id:2, title:'Mendapatkan omset 18 Miliar',
+      target:'Rp 18M', cls:'b2', ncls:'n2',
+      krs: [
+        { n:'2.1', d:'Jumlah downloader 800.000', tgt:800000, cur:D.total_downloads, u:'downloads', inv:false, div:'Marketing', src:'playstore' },
+        { n:'2.2', d:'User premium 120.000', tgt:120000, cur:D.total_premium, u:'user', inv:false, div:'Marketing', src:'markaz' },
+        { n:'2.3', d:'Konversi 15%', tgt:15, cur:conv, u:'%', inv:false, div:'Marketing', src:'markaz' },
+        { n:'2.4', d:'NPS karyawan 31%', tgt:31, cur:D.kr_2_4, u:'%', inv:false, div:'HR & Ops', src:'sheets' },
+        { n:'2.5', d:'Kaizen Improvement 12x/tahun', tgt:12, cur:D.kr_2_5, u:'kali', inv:false, div:'IT', src:'sheets' },
+        { n:'2.6', d:'SOP tiap divisi', tgt:8, cur:D.kr_2_6, u:'divisi', inv:false, div:'HR', src:'sheets' },
+        { n:'2.7', d:'Training 12x/karyawan/tahun', tgt:12, cur:D.kr_2_7, u:'kali', inv:false, div:'HR', src:'sheets' },
+        { n:'2.S', d:'Total Sales YTD (Rp 18M)', tgt:18000000000, cur:D.total_sales, u:'Rp', inv:false, div:'All', src:'markaz', isSales:true }
+      ]
+    },
+    {
+      id:3, title:'Mencapai net profit 30%',
+      target:'30%', cls:'b3', ncls:'n3',
+      krs: [
+        { n:'3.1', d:'Budgeting ketat 90%', tgt:90, cur:D.kr_3_1||null, u:'%', inv:false, div:'Finance', src:'manual' },
+        { n:'3.2', d:'Laporan keuangan tiap bulan', tgt:12, cur:D.kr_3_2, u:'bulan', inv:false, div:'Akuntansi', src:'sheets' },
+        { n:'3.3', d:'Magang 30 orang', tgt:30, cur:D.kr_3_3, u:'orang', inv:false, div:'HR', src:'sheets' },
+        { n:'3.4', d:'Laporan pajak tepat waktu', tgt:1, cur:D.kr_3_4, u:'status', inv:false, div:'Tax', src:'sheets' },
+        { n:'3.5', d:'Audit internal 2x', tgt:2, cur:D.kr_3_5, u:'kali', inv:false, div:'Akuntansi', src:'sheets' }
+      ]
+    }
+  ];
+}
+
+// ============ RENDER ============
+function renderDonut(pct, color) {
+  const r = 45, c = 2 * Math.PI * r;
+  const offset = c - (pct / 100) * c;
+  const grad = color === 'green' ? 'var(--green)' : color === 'yellow' ? 'var(--yellow)' : 'var(--red)';
+  return '<div class="donut"><svg width="110" height="110" viewBox="0 0 110 110">' +
+    '<circle cx="55" cy="55" r="45" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>' +
+    '<circle cx="55" cy="55" r="45" fill="none" stroke="' + grad + '" stroke-width="8" stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + offset + '"/>' +
+    '</svg><span class="pct c-' + color + '">' + pct + '%</span></div>';
+}
+
+function renderPlayStore() {
+  const grid = document.getElementById('psGrid');
+  grid.innerHTML = playStoreApps.map(app => {
+    const rc = !app.rating ? 'var(--muted)' : app.rating >= 4.5 ? 'var(--green)' : app.rating >= 4.0 ? 'var(--cyan)' : app.rating >= 3.5 ? 'var(--yellow)' : 'var(--red)';
+    return '<div class="ps-app"><div class="name">' + app.name + '</div>' +
+      '<div class="rating" style="color:' + rc + '">' + (app.rating ? app.rating.toFixed(1) : '-') + '</div>' +
+      '<div class="stars">' + starsHtml(app.rating) + '</div>' +
+      '<div class="dl">' + app.downloads + '</div>' +
+      '<div class="reviews">' + (app.reviews > 0 ? app.reviews.toLocaleString('id-ID') + ' reviews' : 'Baru') + '</div></div>';
+  }).join('');
+
+  document.getElementById('psDl').textContent = (D.total_downloads / 1e6).toFixed(2) + ' jt+';
+  document.getElementById('psRating').textContent = Number(D.avg_rating).toFixed(2);
+  document.getElementById('psReviews').textContent = (D.total_reviews / 1000).toFixed(1) + ' rb';
+}
+
+function renderAll() {
+  // Update header
+  document.getElementById('snapshotDate').textContent = 'Update: ' + D.snapshot_date;
+
+  // Update live cards
+  document.getElementById('lv_user').textContent = Number(D.total_user).toLocaleString('id-ID');
+  document.getElementById('lv_prem').textContent = Number(D.total_premium).toLocaleString('id-ID');
+  document.getElementById('lv_trans').textContent = Number(D.total_transaksi).toLocaleString('id-ID');
+  document.getElementById('lv_sales').textContent = 'Rp ' + formatRp(D.total_sales);
+
+  // Build OKR
+  const okrData = buildOkrData();
+
+  okrData.forEach(o => {
+    o.krs.forEach(kr => { kr.progress = calcProgress(kr); });
+    const countable = o.krs.filter(kr => !kr.isSales);
+    o.progress = Math.round(countable.reduce((s, kr) => s + kr.progress, 0) / countable.length);
+  });
+
+  const allKrs = okrData.flatMap(o => o.krs.filter(kr => !kr.isSales));
+  const overall = Math.round(allKrs.reduce((s, kr) => s + kr.progress, 0) / allKrs.length);
+  let g = 0, y = 0, r = 0;
+  allKrs.forEach(kr => { if (kr.progress >= 80) g++; else if (kr.progress >= 30) y++; else r++; });
+
+  document.getElementById('ovPct').textContent = overall + '%';
+  document.getElementById('ovPct').className = 'sv c-' + colorCls(overall);
+  document.getElementById('krGreen').textContent = g;
+  document.getElementById('krYellow').textContent = y;
+  document.getElementById('krRed').textContent = r;
+
+  // Donuts
+  document.getElementById('donutCards').innerHTML = okrData.map(o => {
+    const col = colorCls(o.progress);
+    return '<div class="dc"><div class="dtitle">Objective ' + o.id + '</div>' +
+      renderDonut(o.progress, col) +
+      '<div class="otitle">' + o.title + '</div></div>';
+  }).join('');
+
+  // Objectives detail
+  let objHtml = '';
+  okrData.forEach(o => {
+    const col = colorCls(o.progress);
+    objHtml += '<div class="obj"><div class="obj-hdr"><div class="obj-left">' +
+      '<div class="obj-badge ' + o.cls + '">O' + o.id + '</div>' +
+      '<div class="obj-info"><h3>' + o.title + '</h3>' +
+      '<div class="meta">Target: ' + o.target + ' &bull; ' + o.krs.filter(kr => !kr.isSales).length + ' Key Results</div></div></div>' +
+      '<div class="obj-pct c-' + col + '">' + o.progress + '%</div></div><div class="kr-list">';
+    o.krs.forEach(kr => {
+      const p = kr.progress, c = colorCls(p);
+      objHtml += '<div class="kr"><div class="kr-top"><span class="kr-num ' + o.ncls + '">KR ' + kr.n + '</span>' +
+        '<span class="kr-desc">' + kr.d + '</span>' +
+        '<span class="kr-pct c-' + c + '">' + p + '%</span></div>' +
+        '<div class="kr-bar"><div class="kr-fill f-' + c + '" style="width:' + p + '%"></div></div>' +
+        '<div class="kr-meta"><div><span class="kr-div">' + kr.div + '</span> ' + srcBadge(kr.src) +
+        '</div><div>Aktual: <b>' + formatVal(kr) + '</b> / Target: ' + formatTarget(kr) +
+        '</div></div></div>';
+    });
+    objHtml += '</div></div>';
+  });
+  document.getElementById('objDetails').innerHTML = objHtml;
+
+  // Play Store
+  renderPlayStore();
+}
+
+// ============ INIT ============
+renderAll();
+// Auto-fetch on load
+fetchSheetData();
+</script>
+</body>
+</html>
