@@ -113,6 +113,11 @@
   .footer{text-align:center;padding:16px;color:var(--muted);font-size:10px}
   @media(max-width:900px){.ps-grid{grid-template-columns:repeat(3,1fr)}}
   @media(max-width:768px){.live-row,.donuts{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.ps-grid{grid-template-columns:repeat(2,1fr)}}
+
+.rating-filter{display:flex;gap:6px;margin:8px 0}
+.rating-filter button{padding:4px 12px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:11px;cursor:pointer;transition:all .2s}
+.rating-filter button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.rating-filter button:hover:not(.active){border-color:var(--cyan);color:var(--text)}
 </style>
 </head>
 <body>
@@ -121,7 +126,7 @@
   <div class="co">PT Cerebrum Edukanesia Nusantara</div>
   <h1>OKR Dashboard 2026</h1>
   <div class="sub"><span class="live-dot"></span> Data dari Google Sheet &bull; <span id="snapshotDate">Loading...</span></div>
-  <div class="vision"><b>Vision 2029:</b> Membantu setiap orang lolos meraih impiannya dan melahirkan generasi pemimpin berintegritas yang membawa dampak nyata bagi kemajuan bangsa melalui teknologi pendidikan</div>
+  <div class="vision"><b>Vision 2029:</b> Membantu setiap orang lolos meraih impiannya dan melahirkan generasi pemimpin berintegritas yang membawa dampak nyata bagi kemajuan bangsa melalui teknologi pendidikan dengan niat untuk beribadah kepada Allah.</div>
 </div>
 
 <!-- UPDATE BUTTON -->
@@ -151,11 +156,16 @@
 
 <!-- PLAY STORE -->
 <div class="ps-section">
-  <div class="ps-title">&#9658; Google Play Store &mdash; Per-App Data</div>
+  <div class="ps-title">&#9658; Store Ratings &mdash; Per-App Data</div>
   <div class="ps-grid" id="psGrid"></div>
-  <div class="ps-summary">
+  <div class="rating-filter" id="ratingFilter">
+<button class="active" onclick="switchRating('combined')">Rata-rata Gabungan</button>
+<button onclick="switchRating('playstore')">Play Store</button>
+<button onclick="switchRating('appstore')">App Store</button>
+</div>
+<div class="ps-summary">
     <div class="ps-stat"><div class="v" id="psDl">-</div><div class="l">Total Downloads</div></div>
-    <div class="ps-stat"><div class="v" id="psRating">-</div><div class="l">Avg Rating (Weighted)</div></div>
+    <div class="ps-stat"><div class="v" id="psRating">-</div><div class="l" id="psRatingLabel">Avg Rating (Combined)</div></div>
     <div class="ps-stat"><div class="v" id="psReviews">-</div><div class="l">Total Reviews</div></div>
   </div>
 </div>
@@ -176,13 +186,16 @@ let D = {
   total_user: 39483,
   total_premium: 6437,
   total_transaksi: 6348,
-  total_sales: 2000000000,
+  total_sales: 2032211690,
   total_downloads: 1510500,
   avg_rating: 4.58,
   total_reviews: 76603,
   kr_1_1: 0, kr_1_5: 2400,
   kr_2_4: 21.74, kr_2_5: 1, kr_2_6: 0, kr_2_7: 0,
   kr_3_1: 0, kr_3_2: 3, kr_3_3: 13, kr_3_4: 1, kr_3_5: 0
+,
+  avg_rating_appstore: 4.20,
+  total_reviews_appstore: 10
 };
 
 // ============ PLAY STORE (static, update via sheet for totals) ============
@@ -384,8 +397,34 @@ function renderPlayStore() {
   }).join('');
 
   document.getElementById('psDl').textContent = (D.total_downloads / 1e6).toFixed(2) + ' jt+';
-  document.getElementById('psRating').textContent = Number(D.avg_rating).toFixed(2);
-  document.getElementById('psReviews').textContent = (D.total_reviews / 1000).toFixed(1) + ' rb';
+  var totalR = D.total_reviews + D.total_reviews_appstore;
+  var combined = ((D.avg_rating * D.total_reviews) + (D.avg_rating_appstore * D.total_reviews_appstore)) / totalR;
+  document.getElementById('psRating').textContent = combined.toFixed(2);
+  document.getElementById('psReviews').textContent = ((D.total_reviews + D.total_reviews_appstore) / 1000).toFixed(1) + ' rb';
+}
+
+function switchRating(mode) {
+  var btns = document.querySelectorAll('.rating-filter button');
+  btns.forEach(function(b) { b.classList.remove('active'); });
+  event.target.classList.add('active');
+  var ratingEl = document.getElementById('psRating');
+  var reviewsEl = document.getElementById('psReviews');
+  var labelEl = document.getElementById('psRatingLabel');
+  if (mode === 'playstore') {
+    ratingEl.textContent = Number(D.avg_rating).toFixed(2);
+    reviewsEl.textContent = (D.total_reviews / 1000).toFixed(1) + ' rb';
+    labelEl.textContent = 'Avg Rating (Play Store)';
+  } else if (mode === 'appstore') {
+    ratingEl.textContent = Number(D.avg_rating_appstore).toFixed(2);
+    reviewsEl.textContent = D.total_reviews_appstore;
+    labelEl.textContent = 'Avg Rating (App Store)';
+  } else {
+    var totalR = D.total_reviews + D.total_reviews_appstore;
+    var combined = ((D.avg_rating * D.total_reviews) + (D.avg_rating_appstore * D.total_reviews_appstore)) / totalR;
+    ratingEl.textContent = combined.toFixed(2);
+    reviewsEl.textContent = (totalR / 1000).toFixed(1) + ' rb';
+    labelEl.textContent = 'Avg Rating (Combined)';
+  }
 }
 
 function renderAll() {
