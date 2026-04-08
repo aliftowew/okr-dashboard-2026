@@ -157,14 +157,14 @@
 <!-- PLAY STORE -->
 <div class="ps-section">
   <div class="ps-title">&#9658; Store Ratings &mdash; Per-App Data</div>
-  <div class="ps-grid" id="psGrid"></div>
-  <div class="rating-filter" id="ratingFilter">
+<div class="rating-filter" id="ratingFilter">
 <button class="active" onclick="switchRating('combined')">Rata-rata Gabungan</button>
 <button onclick="switchRating('playstore')">Play Store</button>
 <button onclick="switchRating('appstore')">App Store</button>
 </div>
-<div class="ps-summary">
-    <div class="ps-stat"><div class="v" id="psDl">-</div><div class="l">Total Downloads</div></div>
+  <div class="ps-grid" id="psGrid"></div>
+  <div class="ps-summary">
+    <div class="ps-stat"><div class="v" id="psDl">-</div><div class="l" id="psDlLabel">Total Downloads</div></div>
     <div class="ps-stat"><div class="v" id="psRating">-</div><div class="l" id="psRatingLabel">Avg Rating (Combined)</div></div>
     <div class="ps-stat"><div class="v" id="psReviews">-</div><div class="l">Total Reviews</div></div>
   </div>
@@ -215,6 +215,13 @@ const playStoreApps = [
   { name:'TOEFL Academy', rating:4.6, reviews:42, downloads:'5rb+', dlNum:5000 },
   { name:'JadiBeasiswa', rating:3.3, reviews:10, downloads:'5rb+', dlNum:5000 },
   { name:'JagoTPA', rating:null, reviews:0, downloads:'500+', dlNum:500 }
+];
+
+const appStoreApps = [
+  { name:'Cerebrum', rating:5.0, reviews:2, downloads:'-', dlNum:0 },
+  { name:'JadiASN', rating:5.0, reviews:3, downloads:'-', dlNum:0 },
+  { name:'JadiBUMN', rating:4.0, reviews:4, downloads:'-', dlNum:0 },
+  { name:'JadiPPPK', rating:1.0, reviews:1, downloads:'-', dlNum:0 }
 ];
 
 // ============ FETCH FROM GOOGLE SHEET ============
@@ -387,7 +394,7 @@ function renderDonut(pct, color) {
 
 function renderPlayStore() {
   const grid = document.getElementById('psGrid');
-  grid.innerHTML = playStoreApps.map(app => {
+  grid.innerHTML = playStoreApps.concat(appStoreApps).map(app => {
     const rc = !app.rating ? 'var(--muted)' : app.rating >= 4.5 ? 'var(--green)' : app.rating >= 4.0 ? 'var(--cyan)' : app.rating >= 3.5 ? 'var(--yellow)' : 'var(--red)';
     return '<div class="ps-app"><div class="name">' + app.name + '</div>' +
       '<div class="rating" style="color:' + rc + '">' + (app.rating ? app.rating.toFixed(1) : '-') + '</div>' +
@@ -410,21 +417,41 @@ function switchRating(mode) {
   var ratingEl = document.getElementById('psRating');
   var reviewsEl = document.getElementById('psReviews');
   var labelEl = document.getElementById('psRatingLabel');
+  var dlEl = document.getElementById('psDl');
+  var grid = document.getElementById('psGrid');
   if (mode === 'playstore') {
     ratingEl.textContent = Number(D.avg_rating).toFixed(2);
     reviewsEl.textContent = (D.total_reviews / 1000).toFixed(1) + ' rb';
+    dlEl.textContent = (D.total_downloads / 1e6).toFixed(2) + ' jt+';
     labelEl.textContent = 'Avg Rating (Play Store)';
+    renderAppGrid(playStoreApps);
   } else if (mode === 'appstore') {
     ratingEl.textContent = Number(D.avg_rating_appstore).toFixed(2);
     reviewsEl.textContent = D.total_reviews_appstore;
+    dlEl.textContent = '-';
     labelEl.textContent = 'Avg Rating (App Store)';
+    renderAppGrid(appStoreApps);
   } else {
     var totalR = D.total_reviews + D.total_reviews_appstore;
     var combined = ((D.avg_rating * D.total_reviews) + (D.avg_rating_appstore * D.total_reviews_appstore)) / totalR;
     ratingEl.textContent = combined.toFixed(2);
     reviewsEl.textContent = (totalR / 1000).toFixed(1) + ' rb';
+    dlEl.textContent = (D.total_downloads / 1e6).toFixed(2) + ' jt+';
     labelEl.textContent = 'Avg Rating (Combined)';
+    renderAppGrid(playStoreApps.concat(appStoreApps));
   }
+}
+
+function renderAppGrid(apps) {
+  var grid = document.getElementById('psGrid');
+  grid.innerHTML = apps.map(function(app) {
+    var rc = !app.rating ? 'var(--muted)' : app.rating >= 4.5 ? 'var(--green)' : app.rating >= 4.0 ? 'var(--cyan)' : app.rating >= 3.5 ? 'var(--yellow)' : 'var(--red)';
+    return '<div class="ps-app"><div class="name">' + app.name + '</div>' +
+      '<div class="rating" style="color:' + rc + '">' + (app.rating ? app.rating.toFixed(1) : '-') + '</div>' +
+      '<div class="stars">' + starsHtml(app.rating) + '</div>' +
+      '<div class="dl">' + app.downloads + '</div>' +
+      '<div class="reviews">' + (app.reviews > 0 ? app.reviews.toLocaleString('id-ID') + ' reviews' : 'Baru') + '</div></div>';
+  }).join('');
 }
 
 function renderAll() {
